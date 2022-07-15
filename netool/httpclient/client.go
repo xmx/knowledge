@@ -15,6 +15,7 @@ type Client struct {
 	cli *http.Client
 }
 
+// New 创建 httpclient
 func New(cli ...*http.Client) *Client {
 	if len(cli) != 0 {
 		return &Client{cli: cli[0]}
@@ -45,12 +46,8 @@ func (hc Client) GetJSON(addr string, queries url.Values, reply any, opts ...Opt
 	opts = append(opts, opt)
 
 	rc, err := hc.exec(http.MethodGet, addr, queries, nil, opts...)
-	if err != nil {
+	if err != nil || rc == nil { // 请求失败或请求成功但是 Body 为 nil，比如：http.StatusNoContent
 		return err
-	}
-	// 请求成功但是没有响应报文，比如：http.StatusNoContent
-	if rc == nil {
-		return nil
 	}
 
 	err = json.NewDecoder(rc).Decode(reply)
@@ -85,12 +82,8 @@ func (hc Client) PostJSON(addr string, queries url.Values, body, reply any, opts
 	opts = append(opts, opt)
 
 	rc, err := hc.Post(addr, queries, buf, opts...)
-	if err != nil {
+	if err != nil || rc == nil { // 请求失败或请求成功但是 Body 为 nil，比如：http.StatusNoContent
 		return err
-	}
-	// 请求成功但是没有响应报文，比如：http.StatusNoContent
-	if rc == nil {
-		return nil
 	}
 
 	err = json.NewDecoder(rc).Decode(reply)
