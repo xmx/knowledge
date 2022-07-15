@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// Client HTTP Client
 type Client struct {
 	cli *http.Client
 }
@@ -161,10 +162,10 @@ func (hc Client) fetch(req *http.Request) (io.ReadCloser, error) {
 }
 
 // appendQueries 将参数合并
-// 	example:
-//			addr: https://18.com.cn/?name=jack
-// 			queries: map[age][]string{"18"}
-// 		合并后: https://18.com.cn/?name=jack&age=18
+// example:
+//			addr: https://example.com/?name=jack
+// 			queries: map[age][]string{"18", "20}
+// 		合并后: https://example.com/?name=jack&age=18&age=20
 func (hc Client) appendQueries(addr string, queries url.Values) (string, error) {
 	u, err := url.Parse(addr)
 	if err != nil {
